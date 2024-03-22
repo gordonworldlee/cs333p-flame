@@ -1,0 +1,278 @@
+
+\documentclass[12pt]{article}
+
+
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{ifthen}
+\usepackage[table]{xcolor}
+\usepackage{minitoc}
+\usepackage{array}
+\usepackage{graphicx}
+
+\definecolor{yellow}{cmyk}{0,0,1,0}
+\renewcommand{\arraystretch}{1.4}
+\newcommand{\R}{\mathbb{R}}
+
+\usepackage{colortbl}
+\usepackage[top=0.75in, bottom=0.75in, left=1.25in, right=1.25in]{geometry}
+
+%% Page size
+%\setlength{\oddsidemargin}{13pt}
+%%\setlength{\evensidemargin}{-0.5in}
+%\setlength{\textheight}{674pt}
+%\setlength{\textwidth}{426pt}
+%\setlength{\topmargin}{-10pt}
+%\setlength{\voffset}{-30pt}
+
+\renewcommand{\arraycolsep}{3pt}
+
+
+\input{color_flatex}
+
+
+% Page size
+%\setlength{\oddsidemargin}{-0.25in}
+%\setlength{\evensidemargin}{-0.25in}
+%\setlength{\textheight}{9.25in}
+%\setlength{\textwidth}{7in}
+%\setlength{\topmargin}{-0.5in}
+
+
+% ----------------------------------------------------------------
+\title{Triangular Matrix Matrix Multiplication \\ CS 378 Programming for Correctness and Performance}
+
+\author{Devangi N. Parikh}
+
+\begin{document}
+	\maketitle
+
+\section{Operation}
+
+Consider the operation
+\[
+B := L B 
+\]
+where $ L $ is a $ m \times m $ lower triangular matrix and $ B $ is a $ m \times n $ matrix.
+This is a special case of  
+matrix-matrix multiplication, 
+with the {\sc l}ower triangular matrix on the {\sc l}eft, 
+and the triangular matrix is {\sc n}ot transposed.
+We will refer to this operation
+as {\sc Trmm\_llnn} where the {\sc llnn} stands for
+\underline{l}eft
+\underline{l}ower
+\underline{n}o-transpose
+\underline{n}onunit diagonal.
+The {\sc n}onunit diagonal means we will use the entries of the matrix that are stored on the diagonal.  In some other cases, the entries on the diagonal may implicitly be taked to all equal one ({\sc u}nit).
+
+\section{Precondition and Postcondition}
+
+In the precondition 
+\[
+B = \widehat B
+\]
+$ \widehat B $ denotes the original contents of $ B $.
+This allows us to express the state upon completion, the postcondition, as
+\[
+B = L \widehat B.
+\]
+It is implicitly assumed that $ L $ is nonunit lower triangular.
+\section{Partitioned Matrix Expressions and Loop Invariants}
+
+There are two PMEs for this operation.
+
+\subsection{PME 1}
+
+To derive the second PME, partition
+\[
+L \rightarrow
+\left(\begin{array}{c I c}
+	L_{TL} & 0 \\ \whline
+	L_{BL} & L_{BR}
+\end{array}\right)
+,
+\quad \mbox{and} \quad
+B \rightarrow 
+\left(\begin{array}{c}
+	B_T \\ \whline
+	B_B
+\end{array}\right).
+\]
+Substituting these into the postcondition
+yields
+\[
+\left(\begin{array}{c}
+	B_T \\ \whline
+	B_B
+\end{array}\right)
+=
+\left(\begin{array}{c I c}
+	L_{TL} & 0 \\ \whline
+	L_{BL} & L_{BR}
+\end{array}\right)
+\left(\begin{array}{c}
+	\widehat B_T \\ \whline
+	\widehat B_B
+\end{array}\right)
+\]
+or, equivalently,
+\[
+\left(\begin{array}{c}
+	B_T \\ \whline
+	B_B
+\end{array}\right)
+=
+\left(\begin{array}{c}
+	L_{TL} \widehat B_T \\ \whline
+	L_{BL} \widehat B_T + L_{BR} \widehat B_B
+\end{array}\right),
+\]
+which we refer to as the first PME for this operations.
+
+From this, we can choose two loop invariants:
+\begin{description}
+	\item
+	{\bf Invariant 1:}
+\begin{equation}
+	\left(\begin{array}{c}
+		B_T \\ \whline
+		B_B
+	\end{array}\right)
+	= 
+	\left(\begin{array}{c}
+		\widehat B_T \\ \whline
+		L_{BR} \widehat B_B
+	\end{array}\right).	
+\label{eq:inv1}
+\end{equation}	
+ \\
+	(The top part has been left alone and the bottom part has been partially computed).
+	\item
+	{\bf Invariant 2:}
+\begin{equation}
+	\left(\begin{array}{c}
+		B_T \\ \whline
+		B_B
+	\end{array}\right) = 
+	\left(\begin{array}{c}
+		\widehat B_T \\ \whline
+		L_{BL} \widehat B_T + L_{BR} \widehat B_B
+	\end{array}\right).
+\label{eq:inv2}
+	\end{equation} \\
+	(The top part has been left alone and the bottom part has been completely computed).
+\end{description}
+
+\subsection{PME 2}
+
+To derive the second PME, partition
+\[
+B \rightarrow \left(\begin{array}{c I c}
+	B_L & B_R 
+\end{array}\right)
+\]
+and do not partition $ L $.
+Substituting these into the postcondition
+yields
+\[
+\left(\begin{array}{c I c}
+	B_L & B_R 
+\end{array}\right)
+=
+L 
+\left(\begin{array}{c I c}
+	\widehat B_L & \widehat B_R 
+\end{array}\right)
+\]
+or, equivalently,
+\[
+\left(\begin{array}{c I c}
+	B_L & B_R 
+\end{array}\right)
+=
+\left(\begin{array}{c I c}
+	L \widehat B_L & L \widehat B_R 
+\end{array}\right),
+\]
+which we refer to as the second PME.
+
+From this, we can choose two more loop invariants:
+\begin{description}
+	\item
+	{\bf Invariant 3:}
+
+\begin{equation}
+		\left(\begin{array}{c I c}
+		B_L & B_R 
+	\end{array}\right) =
+	\left(\begin{array}{c I c}
+		L \widehat B_L & \widehat B_R 
+	\end{array}\right).
+\label{eq:inv3}
+\end{equation}
+\\
+	(The left part has been completely finished and the right part has been left untouched).
+	\item
+	{\bf Invariant 4:}
+	
+\begin{equation}
+		\left(\begin{array}{c I c}
+		B_L & B_R 
+	\end{array}\right) =
+	\left(\begin{array}{c I c}
+		\widehat B_L & L \widehat B_R 
+	\end{array}\right).
+\label{eq:inv4}
+\end{equation}\\
+	(The left part has been completely finished and the right part has been left untouched).
+\end{description}
+
+
+\section{Deriving the Algorithms}
+
+\subsection{Loop Invariant \eqref{eq:inv1}}
+
+The unblocked algorithm for loop invariant \eqref{eq:inv1} is showing in Figure~\ref{fig:unb_inv1}. While the blocked algorithm for loop invariant \eqref{eq:inv1} is showing in Figure~\ref{fig:blk_inv1}.
+
+
+\resetsteps
+
+\input{Derivations/trmm_llnn_unb_var1}
+
+\begin{figure}
+	\begin{center}
+		\FlaWorksheet
+	\end{center}
+	\caption{Unblocked Algorithm for Loop Invariant \eqref{eq:inv1}}
+	\label{fig:unb_inv1}
+\end{figure}
+
+
+\resetsteps
+
+\input{Derivations/trmm_llnn_blk_var1}
+
+\begin{figure}
+	\begin{center}
+		\FlaWorksheet
+	\end{center}
+	\caption{Blocked Algorithm for Loop Invariant \eqref{eq:inv1}}
+	\label{fig:blk_inv1}
+\end{figure}
+
+\section{Performance of the blocked and unblocked Algorithms}
+
+Figure~\ref{fig:unbAlg1} shows the performance of the unblocked algorithm for loop invariant~\ref{eq:inv1} of TRMM.
+
+\begin{figure}
+\includegraphics[width=\textwidth]{FLAMEC/Plot_unb_GFLOPS.pdf}
+\caption{Performance of the unblocked algorithm for loop invariant~\ref{eq:inv1} of TRMM}.
+\label{fig:unbAlg1}
+\end{figure}
+
+
+
+\end{document}
+
