@@ -32,10 +32,10 @@ function [ C_out ] = Syrk_ln_unb_var1( A, C )
 
     %------------------------------------------------------------%
     % Update subdiagonal entries in current column
-    c21 = c21 + A2 * a1t;
+    c21 = c21 + A2 * a1t.';
 
     % Update diagonal entry
-    gamma11 = gamma11 + a1t * a1t;
+    gamma11 = gamma11 + a1t * a1t.';
 
     %------------------------------------------------------------%
 
