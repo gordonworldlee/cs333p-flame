@@ -9,8 +9,7 @@
 #define TRUE 1
 #define FALSE 0
 
-void trmm_llnn_unb_var1( FLA_Obj, FLA_Obj );
-
+void trmm_runn_unb_var1( FLA_Obj, FLA_Obj );
 int main(int argc, char *argv[])
 {
     int n, nfirst, nlast, ninc, i, irep, nrepeats;
@@ -22,7 +21,7 @@ int main(int argc, char *argv[])
     dtime_best = 0.0;
 
     FLA_Obj
-        Lobj, Bobj, Bold, Bref;
+        Uobj, Bobj, Bold, Bref;
 
     /* Initialize FLAME. */
     FLA_Init( );
@@ -43,13 +42,14 @@ int main(int argc, char *argv[])
     for ( n=nfirst; n<= nlast; n+=ninc ){
 
         /* Allocate space for the matrices and vectors */
-        FLA_Obj_create( FLA_DOUBLE, n, n, 1, n, &Lobj );
+        FLA_Obj_create( FLA_DOUBLE, n, n, 1, n, &Uobj );
         FLA_Obj_create( FLA_DOUBLE, n, n, 1, n, &Bobj );
         FLA_Obj_create( FLA_DOUBLE, n, n, 1, n, &Bold );
         FLA_Obj_create( FLA_DOUBLE, n, n, 1, n, &Bref );
 
         /* Generate random matrix L and B */
-        FLA_Random_matrix( Lobj );
+        //FLA_Random_matrix( Uobj );
+        FLA_Random_tri_matrix( FLA_UPPER_TRIANGULAR, FLA_NONUNIT_DIAG, Uobj );
         FLA_Random_matrix( Bold );
 
 
@@ -61,11 +61,8 @@ int main(int argc, char *argv[])
             /* start clock */
             dtime = FLA_Clock();
 
-            /* Compute Bref = L Bref where L is lower triangular stored in the
-               lower triangular part of array L, by calling FLA_Trmm.  The
-               result ends up in Bref, which we will consider to be the
-               correct result. */
-            FLA_Trmm( FLA_LEFT, FLA_LOWER_TRIANGULAR, FLA_NO_TRANSPOSE, FLA_NONUNIT_DIAG, FLA_ONE, Lobj, Bref );
+            /* Compute Bref = Bref * U where U is upper triangular... */
+            FLA_Trmm( FLA_RIGHT, FLA_UPPER_TRIANGULAR, FLA_NO_TRANSPOSE, FLA_NONUNIT_DIAG, FLA_ONE, Uobj, Bref );
 
             /* stop clock */
             dtime = FLA_Clock() - dtime;
@@ -89,7 +86,7 @@ int main(int argc, char *argv[])
             dtime = FLA_Clock();
 
             /* Comment out the below call and call your routine instead */
-            trmm_llnn_unb_var1( Lobj, Bobj );
+            trmm_runn_unb_var1( Uobj, Bobj );
 
             /* stop clock */
             dtime = FLA_Clock() - dtime;
@@ -107,7 +104,7 @@ int main(int argc, char *argv[])
 
         fflush( stdout );
 
-        FLA_Obj_free( &Lobj );
+        FLA_Obj_free( &Uobj );
         FLA_Obj_free( &Bobj );
         FLA_Obj_free( &Bref );
         FLA_Obj_free( &Bold );
