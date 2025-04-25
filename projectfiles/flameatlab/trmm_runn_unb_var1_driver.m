@@ -19,9 +19,9 @@ L = tril( L );              % make the matrix lower triangular
 
 B = randi( [-3,3], [m,n] );
 %% 
-% Check whether trmm_llnn_unb_var1( L, B ) computes the same as L * B
+% Check whether trmm_runn_unb_var1( L, B ) computes the same as L * B
 
-if ( isequal( trmm_llnn_unb_var1( L, B ), L*B ) )
+if ( isequal( trmm_runn_unb_var1( L, B ), L*B ) )
     disp( 'All seems well' );
 else
     disp( 'Trouble in paradise' )

@@ -1,4 +1,4 @@
-%% Timing and testing trmm_llnn_unb_var[1-8]
+%% Timing and testing trmm_runn_unb_var[1-8]
 % This live script helps you visualize the performance of triangular matrix-matrix 
 % multiplication algorithms implemented with FLAMEC
 %% Time the routines and load the timing data
