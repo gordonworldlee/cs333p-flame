@@ -8,20 +8,21 @@ addpath(pathstoadd);
 %% 
 % Setting the matrix dimension
 
-m = 6;              % problem sizes
+m = 10;              % problem sizes
+n = 5;
 %% 
 
 % Setting up a triangular matrix
-L = randi( [1,3], [m,m] );  % random m x m matrix
-L = tril( L );              % make the matrix lower triangular
+U = randi( [1,3], [n,n] );  % random m x m matrix
+U = triu( U );              % make the matrix lower triangular
  
 % Create a random matrix B
 
 B = randi( [-3,3], [m,n] );
 %% 
-% Check whether trmm_runn_unb_var1( L, B ) computes the same as L * B
+% Check whether trmm_runn_unb_var1( B, U ) computes the same as L * B
 
-if ( isequal( trmm_runn_unb_var1( L, B ), L*B ) )
+if ( isequal( trmm_runn_unb_var1( B, U ), B*U ) )
     disp( 'All seems well' );
 else
     disp( 'Trouble in paradise' )
