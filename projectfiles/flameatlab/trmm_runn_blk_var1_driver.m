@@ -10,6 +10,7 @@ addpath(pathstoadd);
 
 m = 100;              % problem sizes
 n = 25;
+nb_alg = 20;
 %% 
 
 % Setting up a triangular matrix
@@ -20,9 +21,9 @@ U = triu( U );              % make the matrix lower triangular
 
 B = randi( [-3,3], [m,n] );
 %% 
-% Check whether trmm_runn_unb_var1( B, U ) computes the same as L * B
+% Check whether trmm_runn_blk_var1( U, B ) computes the same as L * B
 
-if ( isequal( trmm_runn_unb_var1( B, U ), B*U ) )
+if ( isequal( trmm_runn_blk_var1( U, B, nb_alg ), B*U) )
     disp( 'All seems well' );
 else
     disp( 'Trouble in paradise' )
