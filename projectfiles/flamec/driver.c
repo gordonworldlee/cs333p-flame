@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     double dtime, dtime_best_ref, dtime_best_unb, dtime_best_blk;
     double diff_unb, diff_blk;
     // Block size for blocked algorithm
-    const int nb_alg = 64; 
+    const int nb_alg = 100; 
 
     FLA_Obj Uobj, Bobj, Bold, Bref;
 
