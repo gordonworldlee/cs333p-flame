@@ -7,7 +7,7 @@
 % Programmed by: gord
 %                aniketg@utexas.edu
 
-function [ C_out ] = Syrk_ln_blk_var1( A, C, nb_alg )
+function [ C_out ] = syrk_ln_blk_var1( A, C, nb_alg )
 
   [ AT, ...
     AB ] = FLA_Part_2x1( A, ...
@@ -35,8 +35,8 @@ function [ C_out ] = Syrk_ln_blk_var1( A, C, nb_alg )
 
     %------------------------------------------------------------%
 
-    C21 = C21 + A2 * A1;
-    C11 = C11 + A1 * A1;
+    C21 = C21 + A2 * A1.';
+    C11 = tril(C11) + tril(A1 * A1.');
 
     %------------------------------------------------------------%
 

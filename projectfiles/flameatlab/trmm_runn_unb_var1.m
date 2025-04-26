@@ -32,6 +32,9 @@ function [ B_out ] = Trmm_runn_unb_var1( B, U )
     b1 = b1 * upsilon11;
     b1 = b1 + B0 * u01 + B2 * u21;
 
+    
+    
+
     %------------------------------------------------------------%
 
     [ BL, BR ] = FLA_Cont_with_1x3_to_1x2( B0, b1, B2, ...

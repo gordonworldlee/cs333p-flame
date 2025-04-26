@@ -6,7 +6,7 @@
 % Programmed by: gord
 %                aniketg@utexas.edu
 
-function [ C_out ] = Syrk_ln_unb_var1( A, C )
+function [ C_out ] = syrk_ln_unb_var1( A, C )
 
   [ AT, ...
     AB ] = FLA_Part_2x1( A, ...
