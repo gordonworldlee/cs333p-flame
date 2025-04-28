@@ -37,7 +37,7 @@ int trmm_runn_unb_var1( FLA_Obj U, FLA_Obj B )
 
         FLA_Scal( upsilon11, b1 );
         FLA_Gemv( FLA_NO_TRANSPOSE, FLA_ONE, B0, u01, FLA_ONE, b1 );
-        FLA_Gemv( FLA_NO_TRANSPOSE, FLA_ONE, B2, u21, FLA_ONE, b1 );
+        
 
         /*------------------------------------------------------------*/
 

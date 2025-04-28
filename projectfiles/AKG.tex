@@ -1,0 +1,62 @@
+
+\documentclass[12pt]{article}
+
+
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{ifthen}
+\usepackage[table]{xcolor}
+\usepackage{minitoc}
+\usepackage{array}
+\usepackage{graphicx}
+
+\definecolor{yellow}{cmyk}{0,0,1,0}
+\renewcommand{\arraystretch}{1.4}
+\newcommand{\R}{\mathbb{R}}
+
+\usepackage{colortbl}
+\usepackage[top=0.75in, bottom=0.75in, left=1.25in, right=1.25in]{geometry}
+
+%% Page size
+%\setlength{\oddsidemargin}{13pt}
+%%\setlength{\evensidemargin}{-0.5in}
+%\setlength{\textheight}{674pt}
+%\setlength{\textwidth}{426pt}
+%\setlength{\topmargin}{-10pt}
+%\setlength{\voffset}{-30pt}
+
+\renewcommand{\arraycolsep}{3pt}
+
+
+\input{color_flatex}
+
+
+% Page size
+%\setlength{\oddsidemargin}{-0.25in}
+%\setlength{\evensidemargin}{-0.25in}
+%\setlength{\textheight}{9.25in}
+%\setlength{\textwidth}{7in}
+%\setlength{\topmargin}{-0.5in}
+
+
+% ----------------------------------------------------------------
+\title{Assignment 5 - Symmetric Rank-k Update and Triangular Matrix Matrix Multiplication \\ CS 333P Science of High Performance Computing}
+
+\author{Aniket Gupta, Kavan Mehta, Gordon Lee}
+
+\begin{document}
+	\maketitle
+
+\input{Derivations/trmm_runn}
+
+\clearpage
+
+
+\input{Derivations/syrk_ln}
+
+% 
+
+
+\end{document}
+

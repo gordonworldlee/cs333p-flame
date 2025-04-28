@@ -44,8 +44,6 @@ int trmm_runn_blk_var1( FLA_Obj U, FLA_Obj B, int nb_alg )
             FLA_NONUNIT_DIAG, FLA_ONE, U11, B1);
         FLA_Gemm(FLA_NO_TRANSPOSE, FLA_NO_TRANSPOSE, 
             FLA_ONE, B0, U01, FLA_ONE, B1);
-        FLA_Gemm(FLA_NO_TRANSPOSE, FLA_NO_TRANSPOSE, 
-            FLA_ONE, B2, U21, FLA_ONE, B1);
 
         /*------------------------------------------------------------*/
 

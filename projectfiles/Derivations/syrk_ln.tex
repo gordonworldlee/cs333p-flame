@@ -1,0 +1,227 @@
+\section{Operation}
+
+Considering the operation
+\[
+C := AA^T + C
+\]
+where $ A $ is a $ n \times m $ matrix and $ C $ is a $ n \times n $ symmetric matrix stored in the lower triangle part.
+This is a case of symmetric rank k update, 
+with the {\sc S}ymmetric matrix on the {\sc r}ight, 
+and the matrix is {\sc n}ot transposed.
+We will refer to this operation
+as {\sc Syrk\_ln} where the {\sc ln} stands for
+\underline{l}ower
+\underline{n}onunit diagonal.
+The {\sc n}onunit diagonal means we will use the entries of the matrix that are stored on the diagonal.
+
+\section{Precondition and Post-condition}
+
+In the precondition 
+\[
+C = \widehat C
+\]
+$ \widehat C $ denotes the original contents of the symmetric matrix $ C $ stored in the lower triangular part. Matrix $ A $ is a regular $ n \times m $ matrix.
+This allows us to express the state upon completion, the post-condition, as
+\[
+C = AA^T + \widehat C .
+\]
+
+\section{Partitioned Matrix Expressions and Loop Invariants}
+
+There are two PMEs for this operation.
+
+\subsection{PME 1}
+
+To derive the first PME, partition
+\[
+A \;\longrightarrow\;
+\left(\begin{array}{c I c}
+  A_{L} & A_{R}
+\end{array}\right).
+\]
+and do not partition C.
+Substituting this into the post-condition
+yields
+\[
+C \;=\;
+\left(\begin{array}{c I c}
+  A_{L} & A_{R}
+\end{array}\right)
+\left(\begin{array}{c I c}
+  A_{L} & A_{R}
+\end{array}\right)^{T}
+\;+\;
+\widehat C,
+\]
+or, equivalently,
+\[
+C \;=\; A_{L}A_{L}^{T} \;+\; A_{R}A_{R}^{T} \;+\; \widehat C,
+\]
+which we refer to as the first PME for this operation. From this, we can choose two loop invariants:
+\begin{description}
+  \item
+  {\bf Invariant 1:}
+\begin{equation}
+    C
+  \;=\;
+    A_{L}A_{L}^{T} + \widehat C
+\label{eq:inv1}
+\end{equation}
+\\
+(The left block has been fully computed; the right block remains as in \(\widehat C\).)
+
+  \item
+  {\bf Invariant 2:}
+\begin{equation}
+    C
+  \;=\;
+    A_{R}A_{R}^{T} + \widehat C
+\label{eq:inv2}
+\end{equation}
+\\
+(The right block has been fully computed; the left block remains as in \(\widehat C\).)
+\end{description}
+
+\subsection{PME 2}
+
+To derive the second PME, partition
+\[
+A \;\longrightarrow\;
+\left(\begin{array}{c}
+  A_{T} \\ \whline
+  A_{B}
+\end{array}\right),
+\quad
+C \;\longrightarrow\;
+\left(\begin{array}{c I c}
+  C_{TL} & * \\ \whline
+  C_{BL} & C_{BR}
+\end{array}\right).
+\]
+Substituting these into the post-condition yields
+\[
+\left(\begin{array}{c I c}
+  C_{TL} & * \\ \whline
+  C_{BL} & C_{BR}
+\end{array}\right)
+=
+\left(\begin{array}{c}
+  A_{T} \\ \whline
+  A_{B}
+\end{array}\right)
+\left(\begin{array}{c}
+  A_{T} \\ \whline
+  A_{B}
+\end{array}\right)^{T}
+\;+\;
+\left(\begin{array}{c I c}
+  \widehat C_{TL} & * \\ \whline
+  \widehat C_{BL} & \widehat C_{BR}
+\end{array}\right),
+\]
+or, equivalently,
+\[
+\left(\begin{array}{c I c}
+  \widehat C_{TL} + A_{T}A_{T}^{T} & * \\ \whline
+  \widehat C_{BL} + A_{B}A_{T}^{T} & \widehat C_{BR} + A_{B}A_{B}^{T}
+\end{array}\right),
+\]
+which we refer to as the second PME for this operation. From this, we can choose four loop invariants:
+\begin{description}
+  \item
+  {\bf Invariant 1:}
+  \begin{equation}
+  \left(\begin{array}{c I c}
+    C_{TL} & C_{TR} \\ \whline
+    C_{BL} & C_{BR}
+  \end{array}\right)
+  =
+  \left(\begin{array}{c I c}
+    A_{T}A_{T}^{T} + \widehat C_{TL} & * \\ \whline
+    \widehat C_{BL} + A_{B}A_{T}^{T} & \widehat C_{BR}
+  \end{array}\right)
+  \label{eq:inv1}
+  \end{equation}
+  (The first column has been fully computed; the second column remains as in \(\widehat C\).)
+
+  \item
+  {\bf Invariant 2:}
+  \begin{equation}
+  \left(\begin{array}{c I c}
+    C_{TL} & C_{TR} \\ \whline
+    C_{BL} & C_{BR}
+  \end{array}\right)
+  =
+  \left(\begin{array}{c I c}
+    \widehat C_{TL} & * \\ \whline
+    \widehat C_{BL} + A_{B}A_{T}^{T} & A_{B}A_{B}^{T} + \widehat C_{BR}
+  \end{array}\right)
+  \label{eq:inv2}
+  \end{equation}
+  (The bottom row has been fully computed; the top row remains as in \(\widehat C\).)
+
+  \item
+  {\bf Invariant 3:}
+  \begin{equation}
+  \left(\begin{array}{c I c}
+    C_{TL} & C_{TR} \\ \whline
+    C_{BL} & C_{BR}
+  \end{array}\right)
+  =
+  \left(\begin{array}{c I c}
+    \widehat C_{TL} & * \\ \whline
+    \widehat C_{BL} & A_{B}A_{B}^{T} + \widehat C_{BR}
+  \end{array}\right)
+  \label{eq:inv3}
+  \end{equation}
+  (Only the bottom-right block has been fully computed; all other blocks remain as in \(\widehat C\).)
+
+  \item
+  {\bf Invariant 4:}
+  \begin{equation}
+  \left(\begin{array}{c I c}
+    C_{TL} & C_{TR} \\ \whline
+    C_{BL} & C_{BR}
+  \end{array}\right)
+  =
+  \left(\begin{array}{c I c}
+    A_{T}A_{T}^{T} + \widehat C_{TL} & * \\ \whline
+    \widehat C_{BL} & \widehat C_{BR}
+  \end{array}\right)
+  \label{eq:inv4}
+  \end{equation}
+  (Only the top-left block has been fully computed; all other blocks remain as in \(\widehat C\).)
+\end{description}
+
+
+\section{Deriving the Algorithms}
+
+\subsection{Loop Invariant 3}
+
+The unblocked algorithm Syrk\_ln\_unb\_var3(A, C) for loop invariant 3 is showing in Figure~\ref{fig:unb_inv3}. While the blocked algorithm Syrk\_ln\_blk\_var3(A, C) for loop invariant 3 is seen in Figure~\ref{fig:blk_inv3}. \\
+
+
+\resetsteps
+
+\input{Derivations/syrk_ln_unb_var3}
+
+\begin{figure}
+	\begin{center}
+		\FlaWorksheet
+	\end{center}
+	\caption{Unblocked Algorithm for Loop Invariant 3}
+	\label{fig:unb_inv3}
+\end{figure}
+
+
+\resetsteps
+
+\input{Derivations/syrk_ln_blk_var3}
+
+\begin{figure}
+	\begin{center}
+		\FlaWorksheet
+	\end{center}
+	\caption{Blocked Algorithm for Loop Invariant 3}
+	\label{fig:blk_inv3}
+\end{figure}

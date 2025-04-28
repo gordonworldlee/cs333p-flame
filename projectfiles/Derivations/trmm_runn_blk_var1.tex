@@ -1,0 +1,161 @@
+
+\resetsteps      % Reset all the commands to create a blank worksheet  
+
+% Define the operation to be computed
+
+\renewcommand{\operation}{ \left[ B \right] := \mbox{\sc Trmm\_runn\_blk\_var1}( B, U ) }
+
+\renewcommand{\routinename}{\operation}
+
+% Step 1a: Precondition 
+
+\renewcommand{\precondition}{
+  B = \widehat{B}
+}
+
+% Step 1b: Postcondition 
+
+\renewcommand{\postcondition}{ 
+  \left[B \right]
+  =
+  \mbox{Trmm\_runn}( \widehat{B}, U )
+}
+
+% Step 2: Invariant 
+% Note: Right-hand side of equalities must be updated appropriately
+
+\renewcommand{\invariant}{
+  \left(\begin{array}{c I c}
+     B_L & B_R
+  \end{array}\right)  = 
+  \left(\begin{array}{c I c}
+	\widehat B_L & \widehat B_L U_{TR} + \widehat B_R U_{BR} 
+    \end{array}\right)
+}
+
+% Step 3: Loop-guard 
+
+\renewcommand{\guard}{
+  n( B_R ) < n( B )
+}
+
+% Step 4: Initialize 
+
+\renewcommand{\partitionings}{
+  $
+  B \rightarrow
+  \left(\begin{array}{c I c}
+     B_L & B_R
+  \end{array}\right)
+  $
+,
+  $
+  U \rightarrow
+  \left(\begin{array}{c I c} 
+     U_{TL} & U_{TR} \\ \whline
+     U_{BL} & U_{BR} 
+  \end{array}\right) 
+  $
+}
+
+\renewcommand{\partitionsizes}{
+  $ B_R $ has $ 0 $ columns,
+  $ U_{BR} $ is $ 0 \times 0 $
+}
+
+% Step 5a: Repartition the operands 
+
+\renewcommand{\blocksize}{b}
+
+\renewcommand{\repartitionings}{
+  $  \left(\begin{array}{c I c}
+     B_L & B_R
+  \end{array}\right)
+  \rightarrow
+  \left(\begin{array}{c c I c}
+     B_0 & B_1 & B_2
+  \end{array}\right)
+  $
+,
+  $  \left(\begin{array}{c I c}
+     U_{TL} & U_{TR} \\ \whline 
+     0 & U_{BR}
+  \end{array}\right) 
+  \rightarrow
+  \left(\begin{array}{c c I c}
+     U_{00} & U_{01} & U_{02} \\  
+     0 & U_{11} & U_{12} \\ \whline 
+     0 & 0 & U_{22}
+  \end{array}\right) 
+  $
+}
+
+\renewcommand{\repartitionsizes}{
+  $ B_1 $ has $ b $ columns,
+  $ U_{11} $ is $ b \times b $}
+
+% Step 5b: Move the double lines 
+
+\renewcommand{\moveboundaries}{
+$  
+  \left(\begin{array}{c I c}
+     B_L & B_R
+  \end{array}\right)
+  \leftarrow
+  \left(\begin{array}{c I c c}
+     B_0 & B_1 & B_2
+  \end{array}\right)
+  $
+,
+$  \left(\begin{array}{c I c}
+     U_{TL} & U_{TR} \\ \whline 
+     0 & U_{BR}
+  \end{array}\right) 
+  \leftarrow
+  \left(\begin{array}{c I c c}
+     U_{00} & U_{01} & U_{02} \\ \whline 
+     0 & U_{11} & U_{12} \\  
+     0 & 0 & U_{22}
+  \end{array}\right) 
+  $
+}
+
+% Step 6: State before update
+% Note: The below needs editing consistent with loop-invariant!!!
+
+\renewcommand{\beforeupdate}{
+$  \left(\begin{array}{c c c}
+     B_0 & B_1 & B_2
+  \end{array}\right)  = 
+  \left(\begin{array}{c c c}
+     \widehat B_0 & \widehat B_1 & \widehat B_0 U_{02} + \widehat B_1 U_{12}^T + \widehat B_2 U_{22} 
+  \end{array}\right)
+$
+}
+
+
+% Step 7: State after update
+
+\renewcommand{\afterupdate}{
+$ \left(\begin{array}{c c c}
+     B_0 & B_1 & B_2
+  \end{array}\right)  = 
+  \left(\begin{array}{c c c}
+	\widehat B_0 & \widehat B_0 U_{01} + \widehat B_1 U_{11} & \widehat B_0 U_{02} + \widehat B_1 U_{12}^T + \widehat B_2 U_{22}
+    \end{array}\right)
+$
+}
+
+% Step 8: Insert the updates required to change the 
+%         state from that given in Step 6 to that given in Step 7
+
+\renewcommand{\update}{
+$
+  \begin{array}{l}
+    B_1 = B_1 U_{11} \\
+    B_1 = B_1 + B_0 U_{01} \\
+  \end{array}               % do not delete this line 
+$
+}
+
+

@@ -1,0 +1,214 @@
+\section{Operation}
+
+Considering the operation
+\[
+B := B U
+\]
+where $ U $ is a $ m \times m $ upper triangular matrix and $ B $ is a $ n \times m $ matrix.
+This is a special case of  
+matrix-matrix multiplication, 
+with the {\sc u}pper triangular matrix on the {\sc r}ight, 
+and the triangular matrix is {\sc n}ot transposed.
+We will refer to this operation
+as {\sc Trmm\_runn} where the {\sc runn} stands for
+\underline{r}ight
+\underline{u}pper
+\underline{n}o-transpose
+\underline{n}onunit diagonal.
+The {\sc n}onunit diagonal means we will use the entries of the matrix that are stored on the diagonal.
+
+\section{Precondition and Post-condition}
+
+In the precondition 
+\[
+B = \widehat B
+\]
+$ \widehat B $ denotes the original contents of $ B $. It is implicitly assumed that $ U $ is the upper triangular of nonunit units.
+This allows us to express the state upon completion, the post-condition, as
+\[
+B = \widehat B U .
+\]
+\section{Partitioned Matrix Expressions and Loop Invariants}
+
+There are two PMEs for this operation.
+
+\subsection{PME 1}
+
+To derive the first PME, partition
+\[
+U \rightarrow
+\left(\begin{array}{c I c}
+	U_{TL} & U_{TR} \\ \whline
+	0 & U_{BR}
+\end{array}\right)
+,
+\quad \mbox{and} \quad
+B \rightarrow \left(\begin{array}{c I c}
+	B_L & B_R 
+\end{array}\right)
+\]
+Substituting these into the postcondition
+yields
+\[
+\quad
+\left(\begin{array}{c I c}
+	B_L & B_R 
+\end{array}\right)
+=
+\left(\begin{array}{c I c}
+	\widehat B_L & \widehat B_R 
+\end{array}\right)
+\left(\begin{array}{c I c}
+	U_{TL} & U_{TR} \\ \whline
+	* & U_{BR}
+\end{array}\right)
+\]
+or, equivalently,
+\[
+\left(\begin{array}{c I c}
+	B_L & B_R 
+\end{array}\right)
+=
+\left(\begin{array}{c I c}
+	\widehat B_L U_{TL} & \widehat B_L U_{TR} + \widehat B_R U_{BR} 
+\end{array}\right)
+\]
+which we refer to as the first PME for this operations.
+
+From this, we can choose two loop invariants:
+\begin{description}
+	\item
+	{\bf Invariant 1:}
+\begin{equation}
+	\left(\begin{array}{c I c}
+	B_L & B_R 
+        \end{array}\right)
+	= 
+	\left(\begin{array}{c I c}
+	\widehat B_L & \widehat B_L U_{TR} + \widehat B_R U_{BR} 
+        \end{array}\right).	
+\label{eq:inv1}
+\end{equation}	
+ \\
+	(The left part has been left alone and the right part has been fully computed).
+	\item
+	{\bf Invariant 2:}
+\begin{equation}
+	\left(\begin{array}{c I c}
+	B_L & B_R 
+        \end{array}\right) = 
+	\left(\begin{array}{c I c}
+	\widehat B_L & \widehat B_R U_{BR} 
+        \end{array}\right).
+\label{eq:inv2}
+	\end{equation} \\
+	(The left part has been left alone and the right part has been partially computed).
+\end{description}
+
+\subsection{PME 2}
+
+To derive the second PME, partition
+\[
+B \rightarrow \left(\begin{array}{c}
+		B_T \\ \whline
+		B_B
+	\end{array}\right)
+\]
+and do not partition $ U $.
+Substituting these into the postcondition
+yields
+\[
+\left(\begin{array}{c}
+    B_T \\ \whline
+    B_B
+\end{array}\right)
+=
+\left(\begin{array}{c}
+    \widehat B_T \\ \whline
+    \widehat B_B
+\end{array}\right) 
+U
+\]
+or, equivalently,
+\[
+\left(\begin{array}{c}
+    B_T \\ \whline
+    B_B
+\end{array}\right)
+=
+\left(\begin{array}{c}
+    \widehat B_T U \\ \whline
+    \widehat B_B U
+\end{array}\right) 
+\]
+which we refer to as the second PME.
+
+From this, we can choose two more loop invariants:
+\begin{description}
+	\item
+	{\bf Invariant 3:}
+
+\begin{equation}
+\left(\begin{array}{c}
+    B_T \\ \whline
+    B_B
+\end{array}\right)
+=
+\left(\begin{array}{c}
+    \widehat B_T U \\ \whline
+    \widehat B_B
+\end{array}\right) .
+\label{eq:inv3}
+\end{equation}
+\\
+	(The top part has been completely finished and the bottom part has been left untouched).
+	\item
+	{\bf Invariant 4:}
+	
+\begin{equation}
+\left(\begin{array}{c}
+    B_T \\ \whline
+    B_B
+\end{array}\right)
+=
+\left(\begin{array}{c}
+    \widehat B_T  \\ \whline
+    \widehat B_B U
+\end{array}\right) ..
+\label{eq:inv4}
+\end{equation}\\
+	(The bottom part has been completely finished and the top part has been left untouched).
+\end{description}
+
+
+\section{Deriving the Algorithms}
+
+\subsection{Loop Invariant 1}
+
+The unblocked algorithm Trmm\_runn\_unb\_var1 for loop invariant 1 is showing in Figure~\ref{fig:unb_inv1}. While the blocked algorithm Trmm\_runn\_blk\_var1 for loop invariant 1 is showing in Figure~\ref{fig:blk_inv1}.
+
+
+\resetsteps
+
+\input{Derivations/trmm_runn_unb_var1}
+
+\begin{figure}
+	\begin{center}
+		\FlaWorksheet
+	\end{center}
+	\caption{Unblocked Algorithm for Loop Invariant 1}
+	\label{fig:unb_inv1}
+\end{figure}
+
+
+\resetsteps
+
+\input{Derivations/trmm_runn_blk_var1}
+
+\begin{figure}
+	\begin{center}
+		\FlaWorksheet
+	\end{center}
+	\caption{Blocked Algorithm for Loop Invariant 1}
+	\label{fig:blk_inv1}
+\end{figure}
