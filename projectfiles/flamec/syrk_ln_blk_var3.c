@@ -10,7 +10,7 @@
 
 #include "FLAME.h"
 
-int syrk_ln_blk_var1( FLA_Obj A, FLA_Obj C, int nb_alg )
+int syrk_ln_blk_var3( FLA_Obj A, FLA_Obj C, int nb_alg )
 {
     FLA_Obj AT,              A0,
             AB,              A1,

@@ -8,8 +8,8 @@ addpath(pathstoadd);
 %% 
 % Setting the matrix dimension
 
-m = 100;             
-n = 25;
+m = 37;             
+n = 43;
 %% 
 nb_alg = 10;
 % Setting up a triangular matrix
@@ -19,9 +19,9 @@ C = tril(temp) + tril(temp, -1);
 % Create a random matrix A
 A = randi( [-3,3], [n,m] );
 %% 
-% Check whether syrk_ln_blk_var1( A, C, nb_alg ) computes same as SRYK
+% Check whether syrk_ln_blk_var3( A, C, nb_alg ) computes same as SRYK
 
-if (isequal( syrk_ln_blk_var1( A, C, nb_alg), tril(A*A.' + C)))
+if (isequal( syrk_ln_blk_var3( A, C, nb_alg), tril(A*A.' + C)))
     disp( 'All seems well' );
 else
     disp( 'Trouble in paradise' )

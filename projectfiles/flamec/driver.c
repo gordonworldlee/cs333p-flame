@@ -6,8 +6,8 @@
 /* Function prototypes */
 int trmm_runn_unb_var1(FLA_Obj U, FLA_Obj B);
 int trmm_runn_blk_var1(FLA_Obj U, FLA_Obj B, int nb_alg);
-int syrk_ln_unb_var1( FLA_Obj A, FLA_Obj C );
-int syrk_ln_blk_var1( FLA_Obj A, FLA_Obj C, int nb_alg );
+int syrk_ln_unb_var3( FLA_Obj A, FLA_Obj C );
+int syrk_ln_blk_var3( FLA_Obj A, FLA_Obj C, int nb_alg );
 
 int main(int argc, char *argv[])
 {
@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
         for (irep = 0; irep < nrepeats; irep++) {
             FLA_Copy(Cold, Cobj);
             dtime = FLA_Clock();
-            syrk_ln_unb_var1( A, Cobj );
+            syrk_ln_unb_var3( A, Cobj );
             dtime = FLA_Clock() - dtime;
             dtime_best_unb = (irep == 0) ? dtime : fmin(dtime, dtime_best_unb);
         }
@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
         for (irep = 0; irep < nrepeats; irep++) {
             FLA_Copy(Cold, Cobj);
             dtime = FLA_Clock();
-            syrk_ln_blk_var1( A, Cobj, nb_alg );
+            syrk_ln_blk_var3( A, Cobj, nb_alg );
             dtime = FLA_Clock() - dtime;
             dtime_best_blk = (irep == 0) ? dtime : fmin(dtime, dtime_best_blk);
         }
